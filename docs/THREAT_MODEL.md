@@ -11,6 +11,7 @@ This project demonstrates agent payments for paid research APIs. The main demo u
 - Research query contents
 - Search API keys
 - Paid search results
+- x402 burner wallet private keys used only by isolated examples
 
 ## Trust Boundaries
 
@@ -33,11 +34,14 @@ This project demonstrates agent payments for paid research APIs. The main demo u
 | Untrusted API result | Paid search content includes false data, malicious links, or prompt injection. | Treat search output as untrusted data, cite sources, sanitize rendered content, and keep tool-use policies separate from content. |
 | Ledger tampering | Local JSON records are modified or lost. | Use append-only durable storage, transaction ids, reconciliation jobs, and access controls in production. |
 | Search API key abuse | A leaked search key can generate provider charges. | Store keys in secret managers, rate limit server-side, rotate keys, and avoid exposing provider keys to clients. |
+| Real-payment example misuse | A user may run the isolated x402 buyer against mainnet or an untrusted endpoint. | Default to dry-run, require `--mainnet --confirm-real-money`, enforce endpoint/network allowlists, and keep private keys in `.env` only. |
+| Unwanted bridge or swap | An agent might try to acquire the required asset automatically and expand the spending surface. | Do not implement automatic bridging or swapping. Require users to fund burner wallets manually. |
 
 ## Current Demo Controls
 
 - Mock payments only by default.
 - No real wallet integration in the main app.
+- Real x402 buyer logic is isolated under `examples/x402-real-buyer` and defaults to dry-run.
 - Per-request budget check in the client agent.
 - Payment receipt validation checks protocol, amount, currency, invoice id, and mock signature.
 - Local ledger records payment-like events for inspection.
@@ -56,3 +60,4 @@ Before using this pattern with real funds:
 - Encrypt and rotate secrets.
 - Use durable ledger storage and reconciliation.
 - Add observability, rate limits, and incident response runbooks.
+- Keep real payment examples isolated from the main mock server.

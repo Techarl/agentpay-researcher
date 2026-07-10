@@ -11,6 +11,7 @@
 - 用户研究查询内容
 - 搜索 API key
 - 付费搜索结果
+- 隔离示例中使用的 x402 burner wallet 私钥
 
 ## 信任边界
 
@@ -33,11 +34,14 @@
 | 不可信 API 结果 | 付费搜索内容包含错误信息、恶意链接或 prompt injection。 | 把搜索结果视为不可信数据，保留来源，清理渲染内容，并把工具调用策略和内容分离。 |
 | Ledger 被篡改 | 本地 JSON 记录被修改或丢失。 | 生产环境使用 append-only 持久化存储、交易 id、对账任务和访问控制。 |
 | 搜索 API key 滥用 | 泄露的搜索 key 会产生真实 provider 费用。 | 使用 secret manager，服务端限流，轮换 key，不把 provider key 暴露给客户端。 |
+| 真实支付示例误用 | 用户可能把隔离 x402 buyer 跑在 mainnet 或不可信 endpoint 上。 | 默认 dry-run，mainnet 必须传入 `--mainnet --confirm-real-money`，强制 endpoint/network allowlist，私钥只能放 `.env`。 |
+| 非预期 bridge 或 swap | agent 可能为了获得所需资产自动 bridge/swap，扩大风险面。 | 不实现自动 bridge 或 swap，要求用户手动给 burner wallet 准备资金。 |
 
 ## 当前 demo 已有控制
 
 - 主应用默认只使用 mock payment。
 - 主应用不集成真实钱包。
+- 真实 x402 buyer 逻辑隔离在 `examples/x402-real-buyer`，默认 dry-run。
 - client agent 有单次请求预算检查。
 - mock receipt 验证会检查 protocol、amount、currency、invoice id 和 mock signature。
 - 本地 ledger 记录支付事件，便于检查。
@@ -56,3 +60,4 @@
 - 加密和轮换 secret。
 - 使用持久化 ledger 和对账流程。
 - 增加监控、限流和事故响应流程。
+- 保持真实支付示例和主 mock 服务隔离。

@@ -1,10 +1,10 @@
 # agentpay-researcher
 
-[Chinese README](./README.zh-CN.md) | [Threat model](./docs/THREAT_MODEL.md)
+[Chinese README](./README.zh-CN.md) | [Threat model](./docs/THREAT_MODEL.md) | [Real payments](./docs/REAL_PAYMENTS.md)
 
 A minimal TypeScript research agent that demonstrates machine-to-machine payments for premium search APIs using HTTP 402-style flows.
 
-The main project intentionally uses mock payments only. It never asks for private keys, never signs real transactions, and never moves real funds. Real x402 and MPP/Tempo experiments live under `examples/` and are testnet-oriented.
+The main project intentionally uses mock payments only. It never asks for private keys, never signs real transactions, and never moves real funds. Real payment experiments are isolated under `examples/` and default to dry-run or testnet-oriented flows.
 
 ## What It Shows
 
@@ -131,11 +131,14 @@ Returns the mock payment ledger:
 ## Examples
 
 - [`examples/x402-demo`](./examples/x402-demo): separate Coinbase x402 buyer/seller demo using testnet-only wallet configuration.
+- [`examples/x402-real-buyer`](./examples/x402-real-buyer): isolated real x402 buyer CLI. Default mode is dry-run; testnet requires a funded burner wallet; mainnet requires `--mainnet --confirm-real-money`.
 - [`examples/mpp-tempo-demo`](./examples/mpp-tempo-demo): experimental MPP/Tempo testnet integration area using `mppx`.
 
 ## Threat Model
 
 See [docs/THREAT_MODEL.md](./docs/THREAT_MODEL.md). It covers malicious payment requests, prompt injection causing unwanted spending, replayed payment headers, overspending, fake merchant endpoints, private key leakage, untrusted API results, ledger tampering, and search API key abuse.
+
+For real-payment safety rules, see [docs/REAL_PAYMENTS.md](./docs/REAL_PAYMENTS.md). The project does not automatically bridge or swap funds. Dry-run does not spend money; testnet may require faucet tokens; mainnet uses real money and requires explicit confirmation.
 
 ## How This Maps To Real Payment Protocols
 
@@ -186,6 +189,14 @@ See `.env.example`.
 | `TAVILY_API_KEY` | Tavily API key, only used with `SEARCH_PROVIDER=tavily` |
 | `EXA_API_KEY` | Exa API key, only used with `SEARCH_PROVIDER=exa` |
 | `BRAVE_API_KEY` | Brave API key, only used with `SEARCH_PROVIDER=brave` |
+| `X402_PRIVATE_KEY` | Private key for the isolated x402 real buyer example, never committed |
+| `X402_NETWORK` | x402 buyer network, defaults to `base-sepolia` alias |
+| `X402_RPC_URL` | Optional RPC URL for x402 EVM reads |
+| `X402_ALLOWED_ENDPOINTS` | Comma-separated allowlist for real x402 buyer endpoints |
+| `X402_DEFAULT_ENDPOINT` | Optional default x402 buyer endpoint |
+| `X402_MAX_PER_REQUEST_USD` | Max real-payment budget per request |
+| `X402_MAX_PER_RUN_USD` | Max real-payment budget per run |
+| `X402_ALLOWED_NETWORKS` | Comma-separated network allowlist |
 
 ## Safety Notes
 
@@ -213,6 +224,7 @@ pnpm run start
 pnpm run agent -- "your query" --budget 0.05
 pnpm run ledger
 pnpm run reset:ledger
+pnpm run x402:buyer -- --query "test query" --budget 0.10 --dry-run
 ```
 
 ## License

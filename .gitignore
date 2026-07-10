@@ -9,3 +9,4 @@ yarn-debug.log*
 server.out.log
 server.err.log
 examples/*/pnpm-workspace.yaml
+examples/x402-real-buyer/ledger/
