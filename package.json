@@ -1,0 +1,43 @@
+{
+  "name": "agentpay-researcher",
+  "version": "0.1.0",
+  "description": "Minimal TypeScript research agent demonstrating HTTP 402-style machine-to-machine payments for premium search APIs.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc -p tsconfig.json && node --watch dist/server.js",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.json",
+    "agent": "tsc -p tsconfig.json && node dist/agent.js",
+    "ledger": "tsc -p tsconfig.json && node dist/ledger-cli.js",
+    "reset:ledger": "tsc -p tsconfig.json && node dist/ledger-cli.js --reset"
+  },
+  "keywords": [
+    "ai-agent",
+    "http-402",
+    "x402",
+    "mpp",
+    "stablecoin",
+    "micropayments",
+    "typescript",
+    "express"
+  ],
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.0.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "hono": "^4.12.28",
+    "mppx": "0.8.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3"
+  }
+}
